@@ -1,0 +1,20 @@
+name: 'finance_lakehouse'
+version: '1.0'
+config-version: 2
+profile: 'finance_lakehouse'
+
+model-paths: ['models']
+macro-paths: ['macros']
+seed-paths: ['seeds']
+snapshot-paths: ['snapshots']
+analysis-paths: ['analyses']
+test-paths: ['tests']
+target-path: 'target'
+clean-targets: ['target', 'dbt_packages']
+
+models:
+  finance_lakehouse:
+    +materialized: table
+    +file_format: parquet
+    # DO NOT set table_type for Athena; external is implied by the location
+    +location_root: 's3://finance-lake-clean-vk1911eu/dbt/'
