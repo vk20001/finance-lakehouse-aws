@@ -1,0 +1,49 @@
+name: Finance Lakehouse dbt CI
+
+on:
+  workflow_dispatch:
+    inputs:
+      domain:
+        description: "Data domain to run (fred or stooq)"
+        required: true
+        type: choice
+        options:
+          - fred
+          - stooq
+
+jobs:
+  dbt-run:
+    runs-on: ubuntu-latest
+
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dbt dependencies
+        run: |
+          pip install --upgrade pip
+          pip install dbt-athena-community==1.9.5
+
+      - name: Install dbt packages
+        working-directory: dbt/finance_dbt
+        run: dbt deps
+
+      - name: dbt run
+        working-directory: dbt/finance_dbt
+        run: |
+          dbt run --select tag:${{ github.event.inputs.domain }}
+
+      - name: dbt test
+        working-directory: dbt/finance_dbt
+        run: |
+          dbt test --select tag:${{ github.event.inputs.domain }}
