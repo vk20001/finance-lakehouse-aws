@@ -1,0 +1,16 @@
+version: 2
+
+sources:
+  - name: fred
+    database: AwsDataCatalog
+    schema: finance-lake_db         # <-- match Athena
+    tables:
+      - name: fred_raw              # <-- match table name in Athena
+        description: "Raw FRED CPI JSON payloads written by Lambda"
+        meta:
+          external_location: "s3://finance-lake-raw-*/fred/"
+        columns:
+          - name: s3_path
+            description: "S3 key for traceability"
+          - name: raw_json
+            description: "Raw JSON document from FRED API"

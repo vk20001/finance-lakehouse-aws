@@ -1,0 +1,18 @@
+version: 2
+
+models:
+
+  - name: gold_macro_inflation_regimes
+    columns:
+
+      - name: observation_date
+        tests:
+          - not_null
+
+      - name: cpi_value
+        tests:
+          - not_null
+
+      - name: inflation_regime_label
+        tests:
+          - not_null

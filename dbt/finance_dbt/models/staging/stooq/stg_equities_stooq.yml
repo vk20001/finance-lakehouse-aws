@@ -1,0 +1,43 @@
+models:
+  - name: stg_equities_stooq
+    description: Staging model for Stooq equities price history with typed date normalization and quality guardrails.
+
+    columns:
+
+      - name: symbol
+        description: Equity ticker symbol
+        tests:
+          - not_null
+
+      - name: market_date
+        description: Canonical normalized trade date
+        tests:
+          - not_null
+
+      - name: trade_year
+        description: Derived calendar year from normalized date
+        tests:
+          - not_null
+
+      - name: trade_month
+        description: Derived calendar month from normalized date
+        tests:
+          - not_null
+
+      - name: trade_day
+        description: Derived calendar day from normalized date
+        tests:
+          - not_null
+
+      # - name: is_future_date
+      #   description: Flags rows where date is greater than current date
+      #   tests:
+      #     - accepted_values:
+      #          values: [false]
+
+      # - name: symbol_marketdate_unique
+      #   description: Ensure one price record per symbol per day
+      #   tests:
+      #     - dbt_utils.unique_combination_of_columns:
+      #          combination_of_columns: ["symbol", "market_date"]
+

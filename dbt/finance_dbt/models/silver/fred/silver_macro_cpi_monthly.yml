@@ -1,0 +1,28 @@
+version: 2
+
+models:
+  - name: silver_macro_cpi_monthly
+    description: Trusted monthly CPI macroeconomic time series from FRED
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - series_id
+            - observation_date
+
+    columns:
+      - name: macro_record_id
+        tests:
+          - not_null
+          - unique
+
+      - name: observation_date
+        tests:
+          - not_null
+
+      - name: cpi_value
+        description: Null when FRED publishes missing value "."
+
+      - name: is_missing
+        tests:
+          - not_null

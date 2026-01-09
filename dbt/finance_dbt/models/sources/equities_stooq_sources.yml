@@ -1,0 +1,18 @@
+version: 2
+
+sources:
+  - name: finance_lake_raw
+    database: AwsDataCatalog
+    schema: finance-lake_db
+    tables:
+      - name: equities_stooq_raw
+        description: "Raw daily snapshot CSVs from Stooq (immutable vendor payloads)"
+        columns:
+          - name: symbol
+            description: "Ticker symbol (partition key)"
+          - name: year
+            description: "Ingestion year partition"
+          - name: month
+            description: "Ingestion month partition"
+          - name: day
+            description: "Ingestion day partition"

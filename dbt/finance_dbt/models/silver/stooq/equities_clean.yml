@@ -1,0 +1,18 @@
+models:
+  - name: equities_clean
+    description: Clean canonical equities price table for downstream analytics
+
+    columns:
+
+      - name: symbol
+        tests:
+          - not_null
+
+      - name: market_date
+        tests:
+          - not_null
+
+      # - name: symbol_marketdate_unique
+      #   tests:
+      #     - dbt_utils.unique_combination_of_columns:
+      #          combination_of_columns: ["symbol", "market_date"]

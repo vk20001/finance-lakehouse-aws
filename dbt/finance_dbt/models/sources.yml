@@ -1,9 +1,0 @@
-version: 2
-
-sources:
-  - name: raw
-    database: AwsDataCatalog       # <-- CATALOG (must be AwsDataCatalog)
-    schema: finance-lake_db        # <-- your Glue Database name
-    tables:
-      - name: fred_raw
-      - name: equities_stooq_raw

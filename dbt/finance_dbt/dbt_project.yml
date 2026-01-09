@@ -16,5 +16,22 @@ models:
   finance_lakehouse:
     +materialized: table
     +file_format: parquet
-    # DO NOT set table_type for Athena; external is implied by the location
     +location_root: 's3://finance-lake-clean-vk1911eu/dbt/'
+
+    staging:
+      fred:
+        +tags: ['fred']
+      stooq:
+        +tags: ['stooq']
+
+    silver:
+      fred:
+        +tags: ['fred']
+      stooq:
+        +tags: ['stooq']
+
+    gold:
+      fred:
+        +tags: ['fred']
+      stooq:
+        +tags: ['stooq']
