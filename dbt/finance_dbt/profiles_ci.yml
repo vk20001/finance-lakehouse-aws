@@ -1,0 +1,13 @@
+finance_lakehouse:
+  target: ci
+  outputs:
+    ci:
+      type: athena
+      region_name: "{{ env_var('AWS_REGION') }}"
+      s3_staging_dir: "s3://finance-lake-query-vk1911eu/ci/"
+      s3_data_dir: "s3://finance-lake-clean-vk1911eu/dbt/"
+      database: finance-lake_db
+      schema: analytics
+      work_group: primary
+      aws_access_key_id: "{{ env_var('AWS_ACCESS_KEY_ID') }}"
+      aws_secret_access_key: "{{ env_var('AWS_SECRET_ACCESS_KEY') }}"
