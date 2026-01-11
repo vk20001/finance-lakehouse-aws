@@ -29,7 +29,7 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install dbt dependencies
+      - name: Install dbt
         run: |
           pip install --upgrade pip
           pip install dbt-athena-community==1.9.5
@@ -38,12 +38,17 @@ jobs:
         working-directory: dbt/finance_dbt
         run: dbt deps
 
-      - name: dbt run
-        working-directory: dbt/finance_dbt
-        run: |
-          dbt run --select tag:${{ github.event.inputs.domain }}
+      - name: Create dbt profiles dir
+        run: mkdir -p ~/.dbt
 
-      - name: dbt test
+      - name: Write dbt profile
+        run: cp dbt/finance_dbt/profiles_ci.yml ~/.dbt/profiles.yml
+
+      - name: Run dbt models
         working-directory: dbt/finance_dbt
-        run: |
-          dbt test --select tag:${{ github.event.inputs.domain }}
+        run: dbt run --select tag:${{ github.event.inputs.domain }}
+
+      - name: Run dbt tests
+        working-directory: dbt/finance_dbt
+        run: dbt test --select tag:${{ github.event.inputs.domain }}
+
