@@ -44,6 +44,13 @@ jobs:
       - name: Write dbt profile
         run: cp dbt/finance_dbt/profiles_ci.yml ~/.dbt/profiles.yml
 
+      - name: Debug dbt environment
+        run: |
+          echo "DBT_PROFILES_DIR=$DBT_PROFILES_DIR"
+          env | grep DBT || true
+          ls -la /home/runner || true
+          ls -la ~/.dbt || true
+
       - name: Run dbt models
         working-directory: dbt/finance_dbt
         run: dbt run --select tag:${{ github.event.inputs.domain }}
