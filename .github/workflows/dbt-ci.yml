@@ -53,7 +53,7 @@ jobs:
 
       - name: Run dbt models
         working-directory: dbt/finance_dbt
-        run: dbt run --select tag:${{ github.event.inputs.domain }}
+        run: dbt run --select tag:${{ github.event.inputs.domain }} --full-refresh
 
       - name: Run dbt tests
         working-directory: dbt/finance_dbt
