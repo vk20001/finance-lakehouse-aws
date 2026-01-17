@@ -15,11 +15,6 @@ jobs:
   dbt-run:
     runs-on: ubuntu-latest
 
-    env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_REGION: ${{ secrets.AWS_REGION }}
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -34,28 +29,36 @@ jobs:
           pip install --upgrade pip
           pip install dbt-athena-community==1.9.5
 
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
       - name: Install dbt packages
         working-directory: dbt/finance_dbt
         run: dbt deps
 
-      - name: Create dbt profiles dir
-        run: mkdir -p ~/.dbt
-
-      - name: Write dbt profile
-        run: cp dbt/finance_dbt/profiles_ci.yml ~/.dbt/profiles.yml
-
-      - name: Debug dbt environment
-        run: |
-          echo "DBT_PROFILES_DIR=$DBT_PROFILES_DIR"
-          env | grep DBT || true
-          ls -la /home/runner || true
-          ls -la ~/.dbt || true
+      - name: dbt debug
+        working-directory: dbt/finance_dbt
+        env:
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          ATHENA_S3_QUERY_RESULTS: ${{ secrets.ATHENA_S3_QUERY_RESULTS }}
+        run: dbt debug
 
       - name: Run dbt models
         working-directory: dbt/finance_dbt
-        run: dbt run --select tag:${{ github.event.inputs.domain }} --full-refresh
+        env:
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          ATHENA_S3_QUERY_RESULTS: ${{ secrets.ATHENA_S3_QUERY_RESULTS }}
+        run: |
+          dbt run --select tag:${{ github.event.inputs.domain }}
 
       - name: Run dbt tests
         working-directory: dbt/finance_dbt
-        run: dbt test --select tag:${{ github.event.inputs.domain }}
-
+        env:
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          ATHENA_S3_QUERY_RESULTS: ${{ secrets.ATHENA_S3_QUERY_RESULTS }}
+        run: |
+          dbt test --select tag:${{ github.event.inputs.domain }}
