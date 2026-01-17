@@ -1,0 +1,11 @@
+finance_lakehouse:
+  target: ci
+  outputs:
+    ci:
+      type: athena
+      database: AwsDataCatalog
+      schema: finance-lake_db
+      s3_staging_dir: "{{ env_var('ATHENA_S3_QUERY_RESULTS') }}"
+      region_name: "{{ env_var('AWS_REGION') }}"
+      work_group: primary
+      threads: 1
