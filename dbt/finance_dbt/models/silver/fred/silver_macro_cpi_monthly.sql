@@ -1,6 +1,6 @@
 with base as (
     select
-        series                                   as series_id,
+        series_id,
         cast(observation_date as date)           as observation_date,
 
         case
