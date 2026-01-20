@@ -14,24 +14,37 @@ clean-targets: ['target', 'dbt_packages']
 
 models:
   finance_lakehouse:
-    +materialized: table
-    +file_format: parquet
-    +location_root: 's3://finance-lake-clean-vk1911eu/dbt/'
 
+    # ---------- STAGING ----------
     staging:
+      +materialized: view
+
       fred:
         +tags: ['fred']
+
       stooq:
         +tags: ['stooq']
 
+    # ---------- SILVER ----------
     silver:
+      +materialized: table
+      +file_format: parquet
+      +location_root: "s3://finance-lake-clean-vk1911eu/dbt/"
+
       fred:
         +tags: ['fred']
+
       stooq:
         +tags: ['stooq']
 
+    # ---------- GOLD ----------
     gold:
+      +materialized: table
+      +file_format: parquet
+      +location_root: "s3://finance-lake-clean-vk1911eu/dbt/"
+
       fred:
         +tags: ['fred']
+
       stooq:
         +tags: ['stooq']
