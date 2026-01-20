@@ -36,6 +36,10 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
+      # 🔴 THIS IS THE FIX — DO NOT MOVE IT
+      - name: Clean Athena CTAS temp data
+        run: aws s3 rm s3://finance-lake-query-vk1911eu/tables/ --recursive || true
+
       - name: Install dbt packages
         working-directory: dbt/finance_dbt
         run: dbt deps
