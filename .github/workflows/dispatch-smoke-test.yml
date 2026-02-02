@@ -1,0 +1,14 @@
+name: Dispatch Smoke Test
+
+on:
+  repository_dispatch:
+    types: [dbt_run]
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print payload
+        run: |
+          echo "EVENT: ${{ github.event_name }}"
+          echo "PAYLOAD DOMAIN: ${{ github.event.client_payload.domain }}"
