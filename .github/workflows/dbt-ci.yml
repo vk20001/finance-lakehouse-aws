@@ -1,11 +1,14 @@
 name: Finance Lakehouse dbt CI
 
 on:
-  repository_dispatch:
-    types: [dbt_run]
+  schedule:
+    # Ingestion at 06:00 (FRED) & 06:05 (STOOQ)
+    # Buffer added → dbt runs at 06:30 UTC
+    - cron: "30 6 * * *"
+  workflow_dispatch:
 
 jobs:
-  dbt-run:
+  dbt:
     runs-on: ubuntu-latest
 
     steps:
@@ -29,9 +32,10 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      # 🔴 THIS IS THE FIX — DO NOT MOVE IT
+      # REQUIRED FOR ATHENA STABILITY
       - name: Clean Athena CTAS temp data
-        run: aws s3 rm s3://finance-lake-query-vk1911eu/tables/ --recursive || true
+        run: |
+          aws s3 rm s3://finance-lake-query-vk1911eu/tables/ --recursive || true
 
       - name: Install dbt packages
         working-directory: dbt/finance_dbt
@@ -44,18 +48,16 @@ jobs:
           ATHENA_S3_QUERY_RESULTS: ${{ secrets.ATHENA_S3_QUERY_RESULTS }}
         run: dbt debug
 
-      - name: Run dbt models
+      - name: dbt run (ALL MODELS)
         working-directory: dbt/finance_dbt
         env:
           AWS_REGION: ${{ secrets.AWS_REGION }}
           ATHENA_S3_QUERY_RESULTS: ${{ secrets.ATHENA_S3_QUERY_RESULTS }}
-        run: |
-          dbt run --select tag:${{ github.event.client_payload.domain }}
+        run: dbt run
 
-      - name: Run dbt tests
+      - name: dbt test
         working-directory: dbt/finance_dbt
         env:
           AWS_REGION: ${{ secrets.AWS_REGION }}
           ATHENA_S3_QUERY_RESULTS: ${{ secrets.ATHENA_S3_QUERY_RESULTS }}
-        run: |
-          dbt test --select tag:${{ github.event.client_payload.domain }}
+        run: dbt test
