@@ -1,15 +1,8 @@
 name: Finance Lakehouse dbt CI
 
 on:
-  workflow_dispatch:
-    inputs:
-      domain:
-        description: "Data domain to run (fred or stooq)"
-        required: true
-        type: choice
-        options:
-          - fred
-          - stooq
+  repository_dispatch:
+    types: [dbt_run]
 
 jobs:
   dbt-run:
@@ -57,7 +50,7 @@ jobs:
           AWS_REGION: ${{ secrets.AWS_REGION }}
           ATHENA_S3_QUERY_RESULTS: ${{ secrets.ATHENA_S3_QUERY_RESULTS }}
         run: |
-          dbt run --select tag:${{ github.event.inputs.domain }}
+          dbt run --select tag:${{ github.event.client_payload.domain }}
 
       - name: Run dbt tests
         working-directory: dbt/finance_dbt
@@ -65,4 +58,4 @@ jobs:
           AWS_REGION: ${{ secrets.AWS_REGION }}
           ATHENA_S3_QUERY_RESULTS: ${{ secrets.ATHENA_S3_QUERY_RESULTS }}
         run: |
-          dbt test --select tag:${{ github.event.inputs.domain }}
+          dbt test --select tag:${{ github.event.client_payload.domain }}
