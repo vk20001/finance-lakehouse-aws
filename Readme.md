@@ -4,15 +4,9 @@
 
 The **AWS Finance Lakehouse** is a production-grade, end-to-end data engineering system that models how modern financial data platforms are **built, governed, and operated in practice**.
 
-This is **not a demo** and **not a notebook project**.
+This system demonstrates real production patterns: data quality enforcement, severity-based governance, and fail-safe design where pipelines intentionally block when data integrity is compromised.
 
-The system is intentionally designed to show how a Data Engineer:
-- Prevents bad data from propagating
-- Enforces grain and contracts
-- Treats failures as first-class signals
-- Blocks analytics when trust is broken
-
-The focus is **correctness, governance, and containment**, not happy-path analytics.
+**Tech Stack:** AWS S3 · Athena · Glue Data Catalog · dbt (Athena adapter) · Lambda · EventBridge · GitHub Actions · Terraform
 
 ---
 
@@ -31,6 +25,49 @@ The focus is **correctness, governance, and containment**, not happy-path analyt
 
 All infrastructure is provisioned via **Terraform**.  
 No manual console configuration.
+
+---
+
+## 🎯 Production Deployment Evidence
+
+### System Scale
+- **Deployment period:** September 2024 - January 2025 (4 months active)
+- **Equity symbols tracked:** AAPL, JPM, MSFT, SPY
+- **Market anomalies detected:** 5,705+ events classified
+- **Data domains:** FRED macroeconomic CPI + STOOQ equities
+- **Infrastructure:** Fully provisioned via Terraform, zero manual configuration
+
+### Live Analytics Output
+
+![Financial Analytics Dashboard](./docs/images/dashboard_returns_volatility.png)
+*Multi-symbol performance tracking: daily returns, 30-day rolling volatility, trading volume analysis*
+
+![Market Anomaly Detection](./docs/images/dashboard_anomaly_detection.png)
+*Anomaly classification dashboard: 5,705+ non-normal market events identified (deep drawdowns, volatility spikes, zero-volume days)*
+
+**What this demonstrates:**
+- End-to-end lakehouse: Lambda ingestion → dbt transformation → Athena queries → QuickSight dashboards
+- Production-scale analytics: Real financial data processing with multi-symbol tracking
+- Advanced analytics layer: Anomaly detection, volatility analysis, returns calculation
+
+### Data Quality Gates in Action
+
+This pipeline enforces **severity-based quality gates** that block bad data from reaching production.
+
+![SEV-2 Blocking Event](./docs/images/dbt_sev2_blocking.png)
+*Real production example: CPI control plane detected data instability and blocked gold layer promotion*
+
+**What happened in this run:**
+- ✅ 15 dbt models executed
+- ✅ 22 data quality tests ran
+- ❌ SEV-2 gate triggered: "CPI control plane reports BLOCKING state"
+- ⚠️ Gold macro models frozen: "Gold macro outputs are frozen"
+- ✅ Previous valid data preserved: Downstream analytics unaffected
+
+**Why this matters:**
+This demonstrates **governance over availability** — the pipeline correctly failed to protect data integrity. When CPI revision data showed instability outside acceptable thresholds, the quality gate blocked promotion rather than propagating questionable data.
+
+See [docs/data-quality.md](./docs/data-quality.md) for the full severity framework and [docs/runbook.md](./docs/runbook.md) for operational procedures.
 
 ---
 
@@ -208,28 +245,45 @@ All infrastructure is managed via **Terraform**:
 
 ## Project Philosophy
 
-This project optimizes for **credibility over convenience**.
+This lakehouse demonstrates production data engineering principles:
 
-It intentionally shows:
-- How pipelines fail
-- How failures are contained
-- How governance is enforced in code
-- How analytics are blocked when trust is broken
+**Governance enforced in code:**
+- SEV-1 violations (structural errors) block silver layer
+- SEV-2 violations (business invalidity) block gold layer
+- Quality gates stop bad data, not just alert on it
 
-It intentionally avoids:
-- Happy-path demos
-- Notebook-centric pipelines
-- Silent data corruption
-- Over-reliance on tests without enforcement
+**Operational maturity:**
+- Full infrastructure-as-code (Terraform)
+- Deterministic CI/CD (GitHub Actions)
+- Documented runbooks and incident procedures
+
+**Real production behaviors:**
+- Pipelines designed to fail safely
+- Analytics blocked when trust is broken
+- No silent data corruption
+
+See [docs/architecture.md](./docs/architecture.md) for design details and [docs/lessons-learned.md](./docs/lesson-learned.md) for debugging insights.
+
+---
+
+## Current Status
+
+**Deployment:** Infrastructure destroyed to avoid AWS costs during job search  
+**Code state:** Production-tested and deployment-ready  
+**Redeployment time:** ~2 hours via Terraform  
+
+This project processed real financial data for 4 months. All code, documentation, and architectural decisions are preserved. Infrastructure can be recreated on-demand for technical interviews or demonstrations.
+
+See [docs/](./docs/) for complete operational documentation including architecture diagrams, runbooks, and lessons learned.
 
 ---
 
-## Status
+## Documentation
 
-- Architecture: **Stable**
-- Governance model: **Finalized**
-- CI/CD: **Operational**
-- Domains: **FRED and STOOQ production-grade**
-- Orchestration expansion: **Deferred — event-driven design sufficient**
+- [Architecture Overview](./docs/architecture.md) - System design and component responsibilities
+- [Operational Runbook](./docs/runbook.md) - Daily operations and incident response
+- [Data Quality Framework](./docs/data-quality.md) - Severity-based governance model
+- [Lessons Learned](./docs/lessons-learned.md) - Real debugging scenarios and solutions
 
 ---
+
