@@ -28,10 +28,9 @@ No manual console configuration.
 
 ---
 
-## 🎯 Production Deployment Evidence
+## 🎯 Production Deployment 
 
 ### System Scale
-- **Deployment period:** September 2024 - January 2025 (4 months active)
 - **Equity symbols tracked:** AAPL, JPM, MSFT, SPY
 - **Market anomalies detected:** 5,705+ events classified
 - **Data domains:** FRED macroeconomic CPI + STOOQ equities
@@ -266,17 +265,6 @@ See [docs/architecture.md](./docs/architecture.md) for design details and [docs/
 
 ---
 
-## Current Status
-
-**Deployment:** Infrastructure destroyed to avoid AWS costs during job search  
-**Code state:** Production-tested and deployment-ready  
-**Redeployment time:** ~2 hours via Terraform  
-
-This project processed real financial data for 4 months. All code, documentation, and architectural decisions are preserved. Infrastructure can be recreated on-demand for technical interviews or demonstrations.
-
-See [docs/](./docs/) for complete operational documentation including architecture diagrams, runbooks, and lessons learned.
-
----
 
 ## Documentation
 
