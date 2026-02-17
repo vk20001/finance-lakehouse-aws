@@ -2,9 +2,7 @@
 
 ## Overview
 
-The **AWS Finance Lakehouse** is a production-grade, end-to-end data engineering system that models how modern financial data platforms are **built, governed, and operated in practice**.
-
-This system demonstrates real production patterns: data quality enforcement, severity-based governance, and fail-safe design where pipelines intentionally block when data integrity is compromised.
+The AWS Finance Lakehouse is a production-pattern, end-to-end data engineering system that models how modern financial data platforms are built, governed, and operated in practice.
 
 **Tech Stack:** AWS S3 · Athena · Glue Data Catalog · dbt (Athena adapter) · Lambda · EventBridge · GitHub Actions · Terraform
 
@@ -28,7 +26,7 @@ No manual console configuration.
 
 ---
 
-## 🎯 Production Deployment 
+## 🎯 Deployment 
 
 ### System Scale
 - **Equity symbols tracked:** AAPL, JPM, MSFT, SPY
@@ -275,3 +273,10 @@ See [docs/architecture.md](./docs/architecture.md) for design details and [docs/
 
 ---
 
+--
+
+## Current Status
+
+Infrastructure was destroyed after January 2025 to avoid ongoing AWS costs during job search. All code, documentation and architectural decisions are preserved in this repository. The full stack rebuilds using `terraform apply` followed by `dbt build` — no manual steps required.
+
+---
